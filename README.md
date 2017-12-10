@@ -2,8 +2,11 @@ knockout-dynamic-forms
 ======================
 License: MIT
 
-## Perfection
-Perfection of https://github.com/jansmolders86/knockout-dynamic-forms
+## Fork
+Fork of https://github.com/jansmolders86/knockout-dynamic-forms
+
+## Multiple forms
+Added in 2.0: Supports multiple forms on a page, for use in a single page application, for example in tabbed content blocks. Breaking changes with older JSON files.
 
 ## Knockout Dynamic Forms with Validation
 

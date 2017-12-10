@@ -1,9 +1,17 @@
 
+/*=============================================================================
+	License:		MIT (http://opensource.org/licenses/mit-license.php)		
+																				
+	Description:	Knockout Dynamic Forms							
+	Version:		2.0											
+===============================================================================
+*/
+
 //Validation configurables
 //More info: https://github.com/Knockout-Contrib/Knockout-Validation
-//Perfection of https://github.com/jansmolders86/knockout-dynamic-forms
+//Fork of https://github.com/jansmolders86/knockout-dynamic-forms, adding support for multiple forms on a page
 
-ko.validation.configure({
+ko.validation.init({
     registerExtenders: true,
     messagesOnModified: true,
     errorsAsTitle: true,                 // enables/disables showing of errors as title attribute of the target element.
@@ -45,11 +53,11 @@ ko.dirtyFlag = function (root, isInitiallyDirty) {
 addEventListener('load', function () {
     doAjaxCall(JSONUrl, function (data) {
         var ajaxResult = JSON.parse(data);
-        ko.applyBindings(new ViewModel(ajaxResult.formElements));
+        ko.applyBindings(new ViewModel(ajaxResult.Forms));
     });
 });
 
-
+// The fields on a form
 function FormField(data) {
     var self = this;
     self.Name = ko.observable(data.Name).extend({ required: true });;
@@ -70,10 +78,11 @@ function FormField(data) {
     }
 }
 
-function ViewModel(data) {
+// A form
+function Form(data) {
     var self = this;
-
-    self.Fields = ko.observableArray(ko.utils.arrayMap(data, function (item) {
+    self.Name = ko.observable(data.Name).extend({ required: true });
+    self.FormFields = ko.observableArray(ko.utils.arrayMap(data.FormFields, function (item) {
         return new FormField(item);
     }));
 
@@ -83,9 +92,9 @@ function ViewModel(data) {
     });
 
     self.SaveForm = function () {
-        for (var ii = 0; ii < self.Fields().length; ii++) {
-            console.log(ii);
-            console.log(self.Fields()[ii].Value());
+        for (var i = 0; i < self.FormFields().length; i++) {
+            console.log(i);
+            console.log(self.FormFields()[i].Value());
         }
         if (self.errors().length > 0) {
             self.errors.showAllMessages();
@@ -101,17 +110,17 @@ function ViewModel(data) {
     self.isDirty = ko.computed(function () {
         if (self.dirtyFlag.isDirty()) {
 
-            var formElements = self.Fields();
+            var formFields = self.FormFields();
 
-            for (var i = 0; i < formElements.length; i++) {
+            for (var i = 0; i < formFields.length; i++) {
 
-                var ElementValue = formElements[i].Value();
-                var HideElement = formElements[i].HideElement();
-                var HideCondition = formElements[i].HideCondition();
+                var ElementValue = formFields[i].Value();
+                var HideElement = formFields[i].HideElement();
+                var HideCondition = formFields[i].HideCondition();
 
                 if (HideElement !== "") {
-                    for (var i = 0; i < formElements.length; i++) {
-                        if (formElements[i].Name() === HideElement) {
+                    for (var i = 0; i < formFields.length; i++) {
+                        if (formFields[i].Name() === HideElement) {
                             if (ElementValue.match(HideCondition)) {
                                 self.HiddenElements([HideElement]);
                             }
@@ -133,6 +142,14 @@ function ViewModel(data) {
     }
 }
 
+function ViewModel(data) {
+    var self = this;
+    
+    self.Forms = ko.observableArray(ko.utils.arrayMap(data, function (item) {
+        return new Form(item);
+    }));
+}
+
 function doAjaxCall(url, callback) {
     var xmlhttp;
     xmlhttp = new XMLHttpRequest();
@@ -144,3 +161,4 @@ function doAjaxCall(url, callback) {
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
 }
+

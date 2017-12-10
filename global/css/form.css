@@ -2,7 +2,7 @@
  * "Yet Another Multicolumn Layout" - YAML CSS Framework
  * YAML form theme: "gray-theme"
  *
- * @copyright       © 2005-2013, Dirk Jesse
+ * @copyright       Â© 2005-2013, Dirk Jesse
  * @license         CC-BY 2.0 (http://creativecommons.org/licenses/by/2.0/),
  *                  YAML-CDL (http://www.yaml.de/license.html)
  * @link            http://www.yaml.de
@@ -31,7 +31,6 @@
     font-weight: bold;
     padding: 0 0.5em;
   }
-  .ym-form label,
   .ym-form .ym-label {
     color: #666;
     line-height: 1.5;
